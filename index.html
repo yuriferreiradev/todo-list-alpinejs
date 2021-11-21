@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Alpine.js TodoList</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body>
+  <div x-data="app()">
+    <div class="container mt-5">
+      <header>
+        <h1>Alpine.js TodoList</h1>
+      </header>
+
+      <main>
+        <form class="mt-5" @submit.prevent="createTask">
+          <div class="row">
+            <div class="col-lg-6 col-md-6">
+              <div class="form-group">
+                <label for="inputNewToDo">New ToDo</label>
+                <input type="text" x-model="form.task" class="form-control" placeholder="Insert your activity here"
+                  maxlength="45">
+              </div>
+
+              <div class="form-group">
+                <label for="inputPriority">Priority</label>
+                <select x-model="form.priority" class="form-control">
+                  <option selected>Select priority level</option>
+                  <option :value="1">Low</option>
+                  <option :value="2">Medium</option>
+                  <option :value="3">High</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <button type="submit" class="btn btn-info">Save</button>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 d-none d-sm-block">
+              <img class="img-fluid" src="assets/img/app_ilustration.svg" alt="">
+            </div>
+          </div>
+        </form>
+    </div>
+
+    <div class="container mt-5">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ToDo</th>
+            <th>Priority</th>
+            <th>Options</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="(task,index) in tasks" :key="index">
+            <tr>
+              <td x-text="task.label"></td>
+              <td x-text="task.priority"></td>
+              <td><button @click.prevent="finishTask(index)" class="btn btn-info">Done</button></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </main>
+
+  <footer>
+    <div class="mt-5">
+      <div class="mb-5 text-center">Developed by Yuri Ferreira</div>
+    </div>
+  </footer>
+
+  <script>
+    function app() {
+      return {
+        form: {
+          task: '',
+          priority: null,
+        },
+        tasks: [
+          { label: 'Go to the gym', priority: 'Medium' },
+          { label: 'Buy milk', priority: 'Low' },
+        ],
+        createTask: function () {
+          if (!this.form.task || !this.form.priority) {
+            return false;
+          }
+
+          this.tasks.push({
+            label: this.form.task,
+            priority: this.definePriority(this.form.priority),
+          })
+          this.resetForm();
+          window.scrollTo(0, document.body.scrollHeight);
+        },
+        finishTask: function (index) {
+          this.tasks.splice(index, 1);
+        },
+        definePriority: function (level) {
+          let level_name = '';
+
+          level = parseInt(level);
+          switch (level) {
+            case 1:
+              level_name = 'Low';
+              break;
+            case 2:
+              level_name = 'Medium';
+              break;
+            case 3:
+              level_name = 'High';
+              break;
+          }
+
+          return level_name;
+        },
+        resetForm: function () {
+          this.form.task = '';
+          this.form.priority = null;
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>
